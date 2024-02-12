@@ -1,6 +1,8 @@
 --Criando Banco de Dados Almoxarifa
 CREATE DATABASE db_almoxarifado
 
+DROP DATABASE db_almoxarifado
+
 USE db_almoxarifado
 
 --Criando Tabelas
@@ -14,9 +16,10 @@ nome VARCHAR(90) NOT NULL,
 descricao VARCHAR(500)
 );
 
---Criando Tabela Categorias_Fornecedor
+--Criando Tabela Categorias
+--Categorias de itens e itens dos fornecedores
 --Completo
-CREATE TABLE Categorias_Fornecedor(
+CREATE TABLE Categorias(
 id_categoria INT PRIMARY KEY IDENTITY(1,1),
 nome VARCHAR(90) NOT NULL,
 descricao VARCHAR(400)
@@ -28,7 +31,7 @@ CREATE TABLE Fornecedores_Categorias(
 id_fornecedor INT NOT NULL,
 id_categoria INT NOT NULL,
 FOREIGN KEY(id_fornecedor) REFERENCES Fornecedores(id_fornecedor),
-FOREIGN KEY(id_categoria) REFERENCES Categorias_Fornecedor(id_categoria)
+FOREIGN KEY(id_categoria) REFERENCES Categorias(id_categoria)
 );
 
 --Criando Tabela Enderecos_Fornecedor
@@ -72,6 +75,15 @@ nome VARCHAR(90) NOT NULL,
 descricao VARCHAR(500)
 );
 
+--Criando Tabela Categorias_Item
+--Completa
+CREATE TABLE Itens_Categorias(
+id_item INT NOT NULL,
+id_categoria INT NOT NULL,
+FOREIGN KEY(id_item) REFERENCES Itens(id_item),
+FOREIGN KEY(id_categoria) REFERENCES  Categorias(id_categoria)
+);
+
 --Criando Tabela Departamentos
 --Completa
 CREATE TABLE Departamentos(
@@ -88,7 +100,6 @@ cargo VARCHAR(50) NOT NULL,
 id_departamento INT NOT NULL,
 FOREIGN KEY (id_departamento) REFERENCES Departamentos(id_departamento)
 );
-
 
 --Completa
 CREATE TABLE Telefones_Funcionario(
