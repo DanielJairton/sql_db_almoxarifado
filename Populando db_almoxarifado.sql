@@ -75,6 +75,12 @@ VALUES
 	('fornecedorC@email.com', 3);
 
 SELECT * FROM Emails_Fornecedor;
+SELECT
+	e.email, f.nome AS Fornecedor
+FROM 
+	Emails_Fornecedor e
+JOIN
+	Fornecedores f ON f.id_fornecedor = e.id_fornecedor
 
 --Inserindo Itens
 INSERT INTO 
@@ -124,7 +130,8 @@ INSERT INTO
 VALUES
 	('Almoxarifado'),
 	('Recursos Humanos'),
-	('Contabilidade');
+	('Contabilidade'),
+	('Suprimentos');
 
 SELECT * FROM Departamentos;
 
@@ -136,7 +143,12 @@ VALUES
 	('Funcionário B', 'Cargo B', 2),
 	('Funcionário C', 'Cargo C', 3);
 
-SELECT * FROM Funcionarios
+SELECT 
+	f.nome AS Funcionario, f.cargo AS Cargo, d.nome AS Departamento
+FROM 
+	Funcionarios f
+JOIN
+	Departamentos d ON d.id_departamento = f.id_departamento
 
 --Inserindo telefone de funcionários
 INSERT INTO 
@@ -167,3 +179,74 @@ FROM
 	Funcionarios f
 JOIN
 	Emails_Funcionario e ON e.id_funcionario = f.id_funcionario
+
+--Inserindo Transações
+INSERT INTO
+	Transacoes(data_transacao, tipo, motivo, id_funcionario)
+VALUES
+	('10-02-2024', 'entrada', 'Compra', 3),
+	('12-02-2024', 'entrada', 'Compra', 3),
+	('13-02-2024', 'saida', 'Uso interno', 1);
+
+SELECT
+	t.id_transacao, t.data_transacao, t.tipo, t.motivo, f.nome AS Funcionario, d.nome  AS Departamento
+FROM 
+	Funcionarios f
+JOIN
+	Transacoes t ON t.id_funcionario = f.id_funcionario
+JOIN
+	Departamentos d ON d.id_departamento = f.id_departamento
+
+--Inserindo Entradasno almoxarifado
+INSERT INTO
+	Entradas(data_entrada, condicao, id_transacao, id_funcionario)
+VALUES
+	('11-02-2024', 'Normal', 1, 1),
+	('13-02-2024', 'Normal', 2, 1);
+
+SELECT
+	t.id_transacao, t.data_transacao, t.tipo, t.motivo, f.nome AS Funcionario_Responsável, 
+	d.nome  AS Departamento, e.data_entrada, e.condicao
+FROM 
+	Funcionarios f
+JOIN
+	Transacoes t ON t.id_funcionario = f.id_funcionario
+JOIN
+	Entradas e ON e.id_transacao = t.id_transacao
+JOIN
+	Departamentos d ON d.id_departamento = f.id_departamento
+
+--Inserindo lotes
+INSERT INTO
+	Lotes(preco_unitario, quantidade_entrada, quantidade_atual, data_validade, localizacao, id_entrada, id_item, id_fornecedor)
+VALUES
+	(1.10, 100, 100, NULL, 'Pratileira A', 1, 1, 1),
+	(3.50, 50, 50, NULL, 'Pratileira B', 2, 2, 1);
+
+SELECT 
+	l.id_lote, l.preco_unitario, l.quantidade_entrada, l.quantidade_atual, (l.quantidade_entrada*l.preco_unitario) AS Total_Lote,
+	l.data_validade, l.localizacao, e.data_entrada, e.condicao, i.nome AS Item, f.nome AS Fornecedor
+FROM 
+	Lotes l
+JOIN
+	Entradas e ON e.id_entrada = l.id_entrada
+JOIN
+	Itens i ON i.id_item = l.id_item
+JOIN
+	Fornecedores f ON f.id_fornecedor = l.id_fornecedor
+
+--Inserindo saida de itens
+INSERT INTO
+	Saidas(data_saida, condicao, quantidade_saida, id_transacao, id_lote, id_funcionario_responsavel, id_funcionario_receptor)
+VALUES
+	('13-02-2024', 'Normal', 20, 3, 1, 1, 2);
+
+--Atualizando a quantidade atual do lote de onde sairam os tens
+UPDATE
+	Lotes
+SET
+	quantidade_atual = quantidade_atual - 20
+WHERE
+	id_lote = 1
+
+SELECT * FROM Saidas

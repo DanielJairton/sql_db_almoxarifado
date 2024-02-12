@@ -112,7 +112,7 @@ FOREIGN KEY(id_funcionario) REFERENCES Funcionarios(id_funcionario)
 --Completa
 CREATE TABLE Emails_Funcionario(
 id_email INT PRIMARY KEY IDENTITY(1,1),
-email VARCHAR(20) NOT NULL,
+email VARCHAR(70) NOT NULL,
 id_funcionario INT NOT NULL,
 FOREIGN KEY(id_funcionario) REFERENCES Funcionarios(id_funcionario)
 );
